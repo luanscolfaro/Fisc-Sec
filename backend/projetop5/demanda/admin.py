@@ -1,3 +1,4 @@
 from django.contrib import admin
+from demanda.models import Reclamacao
 
-# Register your models here.
+admin.site.register(Reclamacao)
