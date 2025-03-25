@@ -1,0 +1,21 @@
+# Ambiente Virtual
+venv/
+.env
+
+# Arquivos de banco de dados
+db.sqlite3
+__pycache__/
+*.pyc
+*.pyo
+
+# Configurações do VS Code
+.vscode/
+
+# Migrations (Opcional, se não quiser versioná-las)
+*/migrations/*.py
+!*/migrations/__init__.py
+
+# Arquivos de log e temporários
+*.log
+*.swp
+.DS_Store
