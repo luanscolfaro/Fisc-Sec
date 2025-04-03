@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'rest_framework',  
     'demanda',
     'usuario',
+    'behave_django',
 ]
 
 MIDDLEWARE = [
