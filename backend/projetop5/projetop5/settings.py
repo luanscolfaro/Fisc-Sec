@@ -86,7 +86,7 @@ WSGI_APPLICATION = 'projetop5.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'projetop5',
+        'NAME': 'bdteste',
         'USER': 'root',
         'PASSWORD': 'admin',
         'HOST': 'localhost',
