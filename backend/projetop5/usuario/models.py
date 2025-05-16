@@ -13,6 +13,8 @@ class UsuarioManager(BaseUserManager):
         if not email:
             raise ValueError('O email é obrigatório')
         email = self.normalize_email(email)
+        if 'tipo_conta' not in extra_fields:
+            extra_fields['tipo_conta'] = 'cidadao'
         user = self.model(username=username, email=email, **extra_fields)
         user.set_password(password)
         user.save(using=self._db)
@@ -36,7 +38,7 @@ class Usuario(AbstractUser):
     email = models.EmailField(unique=True)
     telefone = models.CharField(max_length=15, blank=True, null=True)
     cpf = models.CharField(max_length=14, blank=True, null=True)
-    tipo_conta = models.CharField(max_length=10, choices=TIPO_CONTA_CHOICES)
+    tipo_conta = models.CharField(max_length=10, choices=TIPO_CONTA_CHOICES, default='cidadao')
     chave_acesso = models.CharField(max_length=100, blank=True, null=True)
     data_criacao = models.DateTimeField(auto_now_add=True)
 
