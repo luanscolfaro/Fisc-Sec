@@ -1,40 +1,36 @@
+from django.contrib.auth.models import AbstractUser, BaseUserManager
 from django.db import models
 from django.utils import timezone
-from django.contrib.auth.models import AbstractUser
 
 TIPO_CONTA_CHOICES = (
     ('cidadao', 'Cidadão'),
     ('governo', 'Governo'),
+    ('admin', 'Administrador')
 )
 
-class BaseModelQuerySet(models.QuerySet):
-    def delete(self):
-        self.update(deleted_at=timezone.now(), is_active=False)
+class UsuarioManager(BaseUserManager):
+    def create_user(self, username, email, password=None, **extra_fields):
+        if not email:
+            raise ValueError('O email é obrigatório')
+        email = self.normalize_email(email)
+        user = self.model(username=username, email=email, **extra_fields)
+        user.set_password(password)
+        user.save(using=self._db)
+        return user
 
-class BaseManager(models.Manager):
-    def get_queryset(self):
-        return BaseModelQuerySet(self.model, using=self._db).filter(
-            deleted_at__isnull=True, is_active=True
-        )
+    def create_superuser(self, username, email, password=None, **extra_fields):
+        extra_fields.setdefault('is_staff', True)
+        extra_fields.setdefault('is_superuser', True)
+        extra_fields.setdefault('tipo_conta', 'admin')
 
-class BaseModel(models.Model):
-    class Meta:
-        abstract = True
+        if extra_fields.get('is_staff') is not True:
+            raise ValueError('Superusuário precisa ter is_staff=True.')
+        if extra_fields.get('is_superuser') is not True:
+            raise ValueError('Superusuário precisa ter is_superuser=True.')
+        if extra_fields.get('tipo_conta') != 'admin':
+            raise ValueError('Superusuário precisa ter tipo_conta=admin.')
 
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
-    deleted_at = models.DateTimeField(editable=False, blank=True, null=True)
-    is_active = models.BooleanField(editable=False, default=True)
-
-    objects = BaseManager()
-
-    def delete(self, *args, **kwargs):
-        self.is_active = False
-        self.deleted_at = timezone.now()
-        self.save()
-
-    def hard_delete(self, *args, **kwargs):
-        super(BaseModel, self).delete(*args, **kwargs)
+        return self.create_user(username, email, password, **extra_fields)
 
 class Usuario(AbstractUser):
     email = models.EmailField(unique=True)
@@ -46,6 +42,8 @@ class Usuario(AbstractUser):
 
     REQUIRED_FIELDS = ['email', 'cpf', 'tipo_conta']
     USERNAME_FIELD = 'username'
+
+    objects = UsuarioManager()  # << Aqui é onde o manager é atribuído
 
     def __str__(self):
         return self.username
