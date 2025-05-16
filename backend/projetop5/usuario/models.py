@@ -43,7 +43,7 @@ class Usuario(AbstractUser):
     REQUIRED_FIELDS = ['email', 'cpf', 'tipo_conta']
     USERNAME_FIELD = 'username'
 
-    objects = UsuarioManager()  # << Aqui é onde o manager é atribuído
+    objects = UsuarioManager()
 
     def __str__(self):
         return self.username
