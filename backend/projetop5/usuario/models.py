@@ -12,6 +12,13 @@ class UsuarioManager(BaseUserManager):
     def create_user(self, username, email, password=None, **extra_fields):
         if not email:
             raise ValueError('O email é obrigatório')
+        if not email:
+            raise ValueError('O email é obrigatório')
+        if not extra_fields.get('telefone'):
+            raise ValueError('O telefone é obrigatório')
+        if not extra_fields.get('cpf'):
+            raise ValueError('O CPF é obrigatório')
+        
         email = self.normalize_email(email)
         if 'tipo_conta' not in extra_fields:
             extra_fields['tipo_conta'] = 'cidadao'
